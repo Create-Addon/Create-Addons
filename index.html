@@ -1,0 +1,216 @@
+index.html<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Modpack Hub</title>
+  <meta name="description" content="Create Modpack website – list addons, mods, versions, and downloads." />
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0e1117;
+      --card: #161b22;
+      --accent: #58a6ff;
+      --text: #e6edf3;
+      --muted: #8b949e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: radial-gradient(circle at top, #111827, var(--bg));
+      color: var(--text);
+    }
+
+    header {
+      padding: 3rem 1rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(90deg, #58a6ff, #7ee787);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      color: var(--muted);
+      max-width: 700px;
+      margin: auto;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 1rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    input, select {
+      background: var(--card);
+      border: 1px solid #30363d;
+      color: var(--text);
+      padding: 0.6rem 0.8rem;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .card {
+      background: linear-gradient(180deg, #161b22, #0d1117);
+      border: 1px solid #30363d;
+      border-radius: 18px;
+      padding: 1.2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    }
+
+    .card h3 {
+      margin: 0 0 0.4rem;
+      font-size: 1.2rem;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      background: #1f6feb33;
+      color: var(--accent);
+      margin-right: 0.4rem;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin: 0.5rem 0 0.8rem;
+    }
+
+    .links a {
+      text-decoration: none;
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin-right: 0.8rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Create Modpack Hub</h1>
+    <p>A clean GitHub Pages website to list Create addons, modpacks, versions, and downloads.</p>
+  </header>
+
+  <main class="container">
+    <div class="controls">
+      <input id="search" placeholder="Search mods…" />
+      <select id="loader">
+        <option value="">All Loaders</option>
+        <option value="fabric">Fabric</option>
+        <option value="forge">Forge</option>
+        <option value="neoforge">NeoForge</option>
+      </select>
+    </div>
+
+    <div class="grid" id="modGrid"></div>
+  </main>
+
+  <footer>
+    © 2026 Create Addons • Hosted on GitHub Pages
+  </footer>
+
+  <script>
+    const mods = [
+      {
+        name: "Create",
+        description: "Foundation mod for automation and kinetic machines.",
+        loader: "forge",
+        mc: "1.20.1",
+        github: "https://github.com/Creators-of-Create/Create",
+        modrinth: "https://modrinth.com/mod/create"
+      },
+      {
+        name: "Create: Additions",
+        description: "Electric motors, alternators, and energy support.",
+        loader: "forge",
+        mc: "1.20.1",
+        github: "https://github.com/mrh0/createaddition",
+        modrinth: "https://modrinth.com/mod/createaddition"
+      },
+      {
+        name: "Create: Crafts & Additions",
+        description: "More automation blocks and crafting options.",
+        loader: "forge",
+        mc: "1.20.1",
+        github: "#",
+        modrinth: "#"
+      }
+    ];
+
+    const grid = document.getElementById('modGrid');
+    const search = document.getElementById('search');
+    const loaderFilter = document.getElementById('loader');
+
+    function render() {
+      grid.innerHTML = '';
+      const q = search.value.toLowerCase();
+      const l = loaderFilter.value;
+
+      mods
+        .filter(m => m.name.toLowerCase().includes(q))
+        .filter(m => !l || m.loader === l)
+        .forEach(m => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <h3>${m.name}</h3>
+            <span class="badge">${m.loader}</span>
+            <span class="badge">MC ${m.mc}</span>
+            <p>${m.description}</p>
+            <div class="links">
+              <a href="${m.github}" target="_blank">GitHub</a>
+              <a href="${m.modrinth}" target="_blank">Modrinth</a>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+    }
+
+    search.addEventListener('input', render);
+    loaderFilter.addEventListener('change', render);
+
+    render();
+  </script>
+
+</body>
+</html>
